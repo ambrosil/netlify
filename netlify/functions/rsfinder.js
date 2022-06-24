@@ -323,6 +323,9 @@ exports.handler = async function (event, context) {
 
 	const url = event.queryStringParameters.url
 
+	passMap.forEach(item => item.origin = "pass")
+	portalMap.forEach(item => item.origin = "portal")
+
 	return {
 		statusCode: 200,
 		body: JSON.stringify(passMap.concat(portalMap).filter(item => item.url.includes(url))),
