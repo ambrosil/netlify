@@ -1,0 +1,13 @@
+{
+  "name": "qooa-functions",
+  "version": "1.0.0",
+  "private": true,
+  "devDependencies": {},
+  "dependencies": {
+    "@netlify/functions": "^1.0.0"
+  },
+  "scripts": {},
+  "eslintConfig": {
+    "extends": []
+  }
+}
