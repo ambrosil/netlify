@@ -25,9 +25,9 @@ function format(s, fractionDigits) {
 async function getData() {
     const res = await doLogin()
         .then(res => parseCookie(res))
-        .then(cookies => getStats2(cookies))
+        .then(cookies => getStats(cookies))
 
-    const inverter = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.devTypeLangKey.inverter').deviceTips
+    const electricLoad = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.KPI.kpiView.electricalLoad')
     const battery = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.devTypeLangKey.energy_store').deviceTips
     const fv = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.devTypeLangKey.string')
 
@@ -35,7 +35,7 @@ async function getData() {
         "batteria_percentuale": format(battery.SOC, 0),
         "batteria_potenza": format(battery.BATTERY_POWER, 1),
         "batteria_in_scarica": battery.BATTERY_POWER.startsWith("-"),
-        "carico": format(inverter.ACTIVE_POWER, 1),
+        "carico": format(electricLoad.description.value.replace(' kW', ''), 1),
         "fv": format(fv.description.value.replace(' kW', ''), 2)
     }
 
@@ -66,15 +66,6 @@ function doLogin() {
 }
 
 async function getStats(cookies) {
-    const headers = {
-        'Cookie': cookies
-    }
-
-    const url = 'https://region03eu5.fusionsolar.huawei.com/rest/pvms/web/station/v1/overview/station-detail?stationDn=NE%3D35274115&_=1663714022296';
-    return client.get(url, { headers })
-}
-
-async function getStats2(cookies) {
     const headers = {
         'Cookie': cookies
     }
