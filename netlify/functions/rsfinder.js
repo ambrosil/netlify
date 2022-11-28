@@ -328,6 +328,6 @@ exports.handler = async function (event, context) {
 
 	return {
 		statusCode: 200,
-		body: JSON.stringify(passMap.concat(portalMap).filter(item => item.url.includes(url))),
+		body: JSON.stringify(passMap.concat(portalMap).filter(item => item.url.includes(url)), null, 4),
 	};
 }
