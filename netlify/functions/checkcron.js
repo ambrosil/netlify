@@ -1,4 +1,4 @@
-import {doLogin, getStats, parseCookie, sendMail} from "./solar.js";
+const {doLogin, getStats, parseCookie, sendMail} = require("./solar.js")
 
 export default async (req) => {
     const res = await doLogin()

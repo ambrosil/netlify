@@ -1,5 +1,4 @@
-import emailjs from "@emailjs/nodejs";
-
+const emailjs = require("@emailjs/nodejs")
 const axios = require('axios');
 const { wrapper } = require('axios-cookiejar-support');
 const { CookieJar } = require('tough-cookie');
