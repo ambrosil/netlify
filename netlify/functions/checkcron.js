@@ -5,11 +5,14 @@ export default async (req) => {
         .then(res => parseCookie(res))
         .then(cookies => getStats(cookies))
 
+    console.log(new Date() + ": CHECKING....")
     const down = res.data.data.flow.nodes.find(node => node.display === 'DISCONNECTED')
-    //if (down) {
+    if (down) {
+        console.log(new Date() + ": SOLAR KO")
         await sendMail()
-        console.log(new Date() + ": CHECK KO")
-    //}
+    } else {
+        console.log(new Date() + ": SOLAR OK")
+    }
 }
 
 export const config = {
