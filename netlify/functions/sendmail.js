@@ -6,7 +6,7 @@ exports.handler = async function (event, context) {
     })
 
     return {
-        statusCode: 200,
-        body: `${response.status} - ${response.text}`
+        statusCode: response.status,
+        body: response.text
     };
 }
