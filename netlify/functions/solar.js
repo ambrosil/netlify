@@ -22,7 +22,7 @@ function format(s, fractionDigits) {
     return value
 }
 
-async function getData() {
+export async function getData() {
     const res = await doLogin()
         .then(res => parseCookie(res))
         .then(cookies => getStats(cookies))
@@ -42,13 +42,13 @@ async function getData() {
     return data;
 }
 
-async function parseCookie(res) {
+export async function parseCookie(res) {
     return res.headers['set-cookie']
             .map(h => h.split(";")[0])
             .join("; ")
 }
 
-function doLogin() {
+export function doLogin() {
     const data = {
         "organizationName": "",
         "username": process.env.SOLAR_USER,
@@ -65,7 +65,7 @@ function doLogin() {
     return client.post(url, data, { headers })
 }
 
-async function getStats(cookies) {
+export async function getStats(cookies) {
     const headers = {
         'Cookie': cookies
     }

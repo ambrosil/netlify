@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@emailjs/nodejs": "^2.2.0",
-    "@netlify/functions": "^1.0.0",
+    "@netlify/functions": "^1.6.0",
     "@netlify/plugin-emails": "^1.0.3",
     "axios": "^0.27.2",
     "axios-cookiejar-support": "^4.0.3",
