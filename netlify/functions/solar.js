@@ -1,3 +1,5 @@
+import emailjs from "@emailjs/nodejs";
+
 const axios = require('axios');
 const { wrapper } = require('axios-cookiejar-support');
 const { CookieJar } = require('tough-cookie');
@@ -46,6 +48,10 @@ export async function parseCookie(res) {
     return res.headers['set-cookie']
             .map(h => h.split(";")[0])
             .join("; ")
+}
+
+export async function sendMail() {
+    await emailjs.send('service_vsq3w3a', 'template_42ssg8p', {}, {publicKey: '970IaolZgQOrCiJGD', privateKey: 'qu7z0rQZUX6mAW_YvI8xl'})
 }
 
 export function doLogin() {

@@ -1,5 +1,4 @@
-import {doLogin, getStats, parseCookie} from "./solar.js";
-import emailjs from "@emailjs/nodejs";
+import {doLogin, getStats, parseCookie, sendMail} from "./solar.js";
 
 export default async (req) => {
     const res = await doLogin()
@@ -7,9 +6,10 @@ export default async (req) => {
         .then(cookies => getStats(cookies))
 
     const down = res.data.data.flow.nodes.find(node => node.display === 'DISCONNECTED')
-    if (down) {
-        await emailjs.send('service_vsq3w3a', 'template_42ssg8p', {}, {publicKey: '970IaolZgQOrCiJGD', privateKey: 'qu7z0rQZUX6mAW_YvI8xl'})
-    }
+    //if (down) {
+        await sendMail()
+        console.log(new Date() + ": CHECK KO")
+    //}
 }
 
 export const config = {
