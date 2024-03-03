@@ -1,12 +1,12 @@
-const emailjs = require("@emailjs/nodejs")
-const axios = require('axios');
-const { wrapper } = require('axios-cookiejar-support');
-const { CookieJar } = require('tough-cookie');
+import emailjs from "@emailjs/nodejs";
+import axios from "axios";
+import {wrapper} from "axios-cookiejar-support";
+import {CookieJar} from "tough-cookie";
 
 const jar = new CookieJar();
 const client = wrapper(axios.create({ jar }));
 
-exports.handler = async function (event, context) {
+export default async function (event, context) {
     return {
         statusCode: 200,
         body: JSON.stringify(await getData())
@@ -70,11 +70,12 @@ export function doLogin() {
     return client.post(url, data, { headers })
 }
 
-export async function getStats(cookies) {
+export async function getStats() {
+    const cookies = 'HWWAFSESID=62c8760701f0b72d555; HWWAFSESTIME=1708460329219; locale=en-us; dp-session=x-2k5f5gbvlfthhe44vvirdjg8c7enc7dg6leqbuo9o9ulvubuny2k4b2r6l6kam877ws4lfpipf09862mhifsink76o7vc73xk4hgqls5rvqo5j9jbug5gb47qoljg92k; JSESSIONID=FF358784FBB1AB61FF77FDE77C34C686'
     const headers = {
         'Cookie': cookies
     }
 
-    const url = 'https://region03eu5.fusionsolar.huawei.com/rest/pvms/web/station/v1/overview/energy-flow?stationDn=NE%3D35274115&_=1664032391631';
+    const url = 'https://uni003eu5.fusionsolar.huawei.com/rest/pvms/web/station/v1/overview/energy-flow?stationDn=NE%3D138562592&_=1709487529235';
     return client.get(url, { headers })
 }
