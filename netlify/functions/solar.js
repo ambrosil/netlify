@@ -24,9 +24,7 @@ function format(s, fractionDigits) {
 }
 
 export async function getData() {
-    const res = await doLogin()
-        .then(res => parseCookie(res))
-        .then(cookies => getStats(cookies))
+    const res = await getStats()
 
     const electricLoad = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.KPI.kpiView.electricalLoad')
     const battery = res.data.data.flow.nodes.find(node => node.name === 'neteco.pvms.devTypeLangKey.energy_store').deviceTips
