@@ -73,7 +73,11 @@ export function doLogin() {
 export async function getStats() {
     const cookies = 'HWWAFSESID=62c8760701f0b72d555; HWWAFSESTIME=1708460329219; locale=en-us; dp-session=x-2k5f5gbvlfthhe44vvirdjg8c7enc7dg6leqbuo9o9ulvubuny2k4b2r6l6kam877ws4lfpipf09862mhifsink76o7vc73xk4hgqls5rvqo5j9jbug5gb47qoljg92k; JSESSIONID=FF358784FBB1AB61FF77FDE77C34C686'
     const headers = {
-        'Cookie': cookies
+        'Cookie': cookies,
+        'Accept-Language': 'it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7,ko;q=0.6,fr;q=0.5',
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
     }
 
     const url = 'https://uni003eu5.fusionsolar.huawei.com/rest/pvms/web/station/v1/overview/energy-flow?stationDn=NE%3D138562592&_=1709487529235';
