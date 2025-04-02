@@ -1,11 +1,11 @@
-const fetch = require('node-fetch');
+const axios = require('axios');
 const pdf = require("pdf-parse");
 const TelegramBot = require("node-telegram-bot-api");
 const {readBin, updateBin} = require("./jsonbin-api.cjs");
 const cloudinary = require('cloudinary').v2;
 
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN;
-const CHAT_ID = '-4677682029';
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN
+const CHAT_ID = process.env.TELEGRAM_CHATID
 
 cloudinary.config({
 	cloud_name: process.env.CLOUDINARY_NAME,
@@ -33,9 +33,11 @@ exports.handler = async function(event, context) {
 		const nuoviSaldi = await calcolaNuoviSaldi(spese)
 		const imageUrl = await generaReportPNG(nuoviSaldi)
 
-		await sendPDF(pdfUrl)
-		await sendImage(imageUrl)
-		await aggiornaSaldi(nuoviSaldi)
+		await Promise.all([
+			sendPDF(pdfUrl),
+			sendImage(imageUrl),
+			aggiornaSaldi(nuoviSaldi)
+		]);
 
 		return { statusCode: 200, body: JSON.stringify(spese) };
 	} catch (error) {
@@ -67,28 +69,20 @@ async function calcolaNuoviSaldi(spese) {
 
 async function downloadPdfAsBuffer(pdfUrl) {
 	try {
-		// Effettua la richiesta HTTP
-		const response = await fetch(pdfUrl, {
-			method: 'GET',
+		const response = await axios.get(pdfUrl, {
 			headers: {
 				'Accept': 'application/pdf'
-			}
+			},
+			responseType: 'arraybuffer'
 		});
 
-		// Verifica che la risposta sia OK
-		if (!response.ok) {
-			throw new Error(`Errore HTTP: ${response.status} ${response.statusText}`);
-		}
-
 		// Verifica che il content-type sia effettivamente PDF
-		const contentType = response.headers.get('content-type');
+		const contentType = response.headers['content-type'];
 		if (contentType && !contentType.includes('application/pdf')) {
-			// console.warn(`Attenzione: il content-type non è PDF ma ${contentType}`);
+			console.error(`Attenzione: il content-type non è PDF ma ${contentType}`);
 		}
 
-		// Ottieni i dati come ArrayBuffer e convertili in Buffer
-		const arrayBuffer = await response.arrayBuffer();
-		return Buffer.from(arrayBuffer);
+		return Buffer.from(response.data);
 	} catch (error) {
 		console.error('Errore durante il download del PDF:', error);
 		throw error;
@@ -139,7 +133,7 @@ async function extractPdfInfo(dataBuffer) {
 		return info;
 	} catch (error) {
 		console.error("Errore nell'analisi del PDF:", error);
-		return { error: error.message };
+		throw error;
 	}
 }
 
@@ -208,20 +202,15 @@ async function callFirstLink(text) {
 	}
 
 	const link = match[0];
-	// console.log("Estratto link dall'email:", link);
 
-	const response = await fetch(link, {
-		method: 'GET',
+	const response = await axios.get(link, {
 		headers: {
 			'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 		},
-		redirect: 'follow'
+		maxRedirects: 5  // Gestisce automaticamente i redirect
 	});
 
-
-	// Log URL finale dopo eventuali redirect
-	// console.log("URL finale dopo i redirect:", response.url);
-	return await response.text();
+	return response.data;
 }
 
 function getPivot(lines) {
@@ -311,28 +300,12 @@ function calcolaRipartizioneSpese(info) {
 		SininiElia: quotaUnitaria6
 	};
 
-	// Prepara i risultati
-	return {
-		totaleBolletta: arrotondaPerEccesso(totaleBolletta),
-		percentuali: {
-			condivisi: arrotondaPerEccesso(percentualeCondivisi),
-			condominio: arrotondaPerEccesso(percentualeCondominio)
-		},
-		speseDaDividere: {
-			in4: arrotondaPerEccesso(spesaDaDividereIn4),
-			in6: arrotondaPerEccesso(spesaDaDividereIn6)
-		},
-		quoteUnitarie: {
-			quotaUnitaria4: arrotondaPerEccesso(quotaUnitaria4),
-			quotaUnitaria6: arrotondaPerEccesso(quotaUnitaria6)
-		},
-		quotePerCondomino: Object.fromEntries(
-			Object.entries(quote).map(([nome, importo]) => [
-				nome,
-				arrotondaPerEccesso(importo)
-			])
-		)
-	}.quotePerCondomino;
+	return Object.fromEntries(
+		Object.entries(quote).map(([nome, importo]) => [
+			nome,
+			arrotondaPerEccesso(importo)
+		])
+	);
 }
 
 async function generaReportPNG(saldi) {
